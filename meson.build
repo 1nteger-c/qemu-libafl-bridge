@@ -3360,6 +3360,7 @@ if have_system or have_user
     'target/arm',
     'target/arm/hvf',
     'target/hppa',
+    'target/hexagon',
     'target/i386',
     'target/i386/kvm',
     'target/mips/tcg',
