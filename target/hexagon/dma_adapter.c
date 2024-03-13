@@ -878,6 +878,7 @@ void arch_dma_tick_until_stop(processor_t *proc, int dmanum) {
 	dma_t *dma = proc->dma[dmanum];
 	uint32_t status = 0;
 	uint32_t ticks = 0;
+	status = ticks;
 	while(!status) {
 #ifdef VERIFICATION
 		status = dma_tick_debug(dma, 1);	// status == 0 running, status == 1, stopped for some reason
