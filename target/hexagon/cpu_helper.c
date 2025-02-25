@@ -386,7 +386,24 @@ void hexagon_wait_thread(CPUHexagonState *env, target_ulong PC)
         qemu_log("WARNING: executing wait() with acquired lock"
                  "may lead to deadlock\n");
     }
+    
+    qemu_log_mask(LOG_GUEST_ERROR,
+            "thread %d attempted to wait while mode is: %d\n",
+            env->threadId, get_exe_mode(env));
+            
+    
+    if(get_exe_mode(env) == HEX_EXE_MODE_WAIT) {
+         qemu_log_mask(LOG_GUEST_ERROR,
+            "thread %d attempted to wait while already HEX_EXE_MODE_WAIT!!! PC: %x wait_next_px: %x\n",
+            env->threadId, PC,env->wait_next_pc);
+            UNLOCK_IOTHREAD(exception_context);
+            cpu_stop_current();
+            return;
+    }
+    
     g_assert(get_exe_mode(env) != HEX_EXE_MODE_WAIT);
+    
+
 
     CPUState *cs = env_cpu(env);
     /*

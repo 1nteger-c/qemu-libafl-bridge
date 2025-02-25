@@ -60,6 +60,7 @@
 #include "sysemu/sysemu.h"
 #include "sysemu/tpm.h"
 #include "trace.h"
+//#include "libafl_extras/exit.h"
 
 static NotifierList exit_notifiers =
     NOTIFIER_LIST_INITIALIZER(exit_notifiers);
@@ -72,6 +73,7 @@ static QemuMutex vmstop_lock;
 
 //// --- Begin LibAFL code ---
 void libafl_exit_request_internal(CPUState* cpu, uint64_t pc, ShutdownCause cause, int signal);
+void libafl_exit_request_timeout(CPUState* cpu, uint64_t pc);
 //// --- End LibAFL code ---
 
 typedef struct {
@@ -746,6 +748,19 @@ void qemu_register_shutdown_notifier(Notifier *notifier)
 void qemu_system_debug_request(void)
 {
     debug_requested = 1;
+    /*
+//// --- Begin LibAFL code ---
+#ifdef AS_LIB
+    if (current_cpu) {
+        CPUClass *cc = CPU_GET_CLASS(current_cpu);
+        libafl_exit_request_timeout(current_cpu, cc->get_pc(current_cpu));
+    } else {
+        libafl_exit_request_timeout(NULL, 0);
+    }
+#endif
+//// --- End LibAFL code ---
+*/
+
     qemu_notify_event();
 }
 

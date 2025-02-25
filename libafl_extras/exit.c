@@ -108,6 +108,15 @@ void libafl_exit_request_internal(CPUState* cpu, uint64_t pc, ShutdownCause caus
     expected_exit = true;
 }
 
+void libafl_exit_request_timeout(CPUState* cpu, uint64_t pc)
+{
+    last_exit_reason.kind = TIMEOUT;
+    last_exit_reason.cpu = cpu;
+    last_exit_reason.next_pc = pc;
+
+    expected_exit = true;
+}
+
 void libafl_exit_request_sync_backdoor(CPUState* cpu, target_ulong pc)
 {
     last_exit_reason.kind = SYNC_BACKDOOR;

@@ -1270,6 +1270,8 @@ void hexagon_cpu_do_interrupt(CPUState *cs)
             break;
 
         case HEX_CAUSE_IMPRECISE_NMI:
+            qemu_log_mask(CPU_LOG_INT,
+                          "NMI, cur PC 0x%08x\n", ARCH_GET_THREAD_REG(env, HEX_REG_PC));
             hexagon_ssr_set_cause(env, env->cause_code);
             set_addresses(env, 4, cs->exception_index);
             ARCH_SET_SYSTEM_REG(env, HEX_SREG_DIAG,

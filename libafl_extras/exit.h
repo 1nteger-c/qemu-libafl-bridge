@@ -23,6 +23,7 @@ enum libafl_exit_reason_kind {
     INTERNAL = 0,
     BREAKPOINT = 1,
     SYNC_BACKDOOR = 2,
+    TIMEOUT = 3,
 };
 
 // A breakpoint has been triggered.
@@ -47,6 +48,7 @@ struct libafl_exit_reason {
         struct libafl_exit_reason_internal internal;
         struct libafl_exit_reason_breakpoint breakpoint; // kind == BREAKPOINT
         struct libafl_exit_reason_sync_backdoor backdoor; // kind == SYNC_BACKDOOR
+        struct libafl_exit_reason_sync_backdoor timeout; // kind == TIMEOUT
     } data;
 };
 
@@ -59,6 +61,7 @@ bool libafl_exit_asap(void);
 void libafl_sync_exit_cpu(void);
 
 void libafl_exit_request_internal(CPUState* cpu, uint64_t pc, ShutdownCause cause, int signal);
+void libafl_exit_request_timeout(CPUState* cpu, uint64_t pc);
 void libafl_exit_request_sync_backdoor(CPUState* cpu, target_ulong pc);
 void libafl_exit_request_breakpoint(CPUState* cpu, target_ulong pc);
 struct libafl_exit_reason* libafl_get_exit_reason(void);
